@@ -1,0 +1,59 @@
+version: '3.7'
+services:
+  zookeeper:
+    image: zookeeper:3.5.6
+    container_name: "zookeeper-wiki"
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+  kafka:
+    image: wurstmeister/kafka:latest
+    restart: unless-stopped
+    container_name: "kafka-wiki"
+    ports:
+      - "9092:9092"
+    expose:
+      - "9093"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper-wiki:2181/kafka
+      KAFKA_BROKER_ID: 0
+      KAFKA_ADVERTISED_HOST_NAME: kafka-wiki
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-wiki:9093,OUTSIDE://localhost:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,OUTSIDE:PLAINTEXT
+  pinot-controller:
+    image: apachepinot/pinot:0.9.2
+    command: "StartController -zkAddress zookeeper-wiki:2181 -dataDir /data"
+    container_name: "pinot-controller-wiki"
+    volumes:
+      - ./config:/config
+      - ./data:/data
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+    depends_on:
+      - zookeeper
+  pinot-broker:
+    image: apachepinot/pinot:0.9.2
+    command: "StartBroker -zkAddress zookeeper-wiki:2181"
+    restart: unless-stopped
+    container_name: "pinot-broker-wiki"
+    volumes:
+      - ./config:/config
+    ports:
+      - "8099:8099"
+    depends_on:
+      - pinot-controller
+  pinot-server:
+    image: apachepinot/pinot:0.9.2
+    command: "StartServer -zkAddress zookeeper-wiki:2181"
+    restart: unless-stopped
+    container_name: "pinot-server-wiki"
+    volumes:
+      - ./config:/config
+    depends_on:
+      - pinot-broker

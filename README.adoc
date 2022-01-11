@@ -1,0 +1,42 @@
+# Building a real-time analytics dashboard with Streamlit, Apache Pinot, and Apache Kafka
+
+Spin up all components
+
+[source, bash]
+----
+docker-compose up
+----
+
+Add Pinot Table
+
+[source, bash]
+----
+docker exec -it pinot-controller-wiki bin/pinot-admin.sh AddTable \
+  -tableConfigFile /config/table.json \
+  -schemaFile /config/schema.json \
+  -exec
+----
+
+Ingest Wikipedia events
+
+[source, bash]
+----
+python wiki_to_kafka.py
+----
+
+Check Wikipedia events are ingesting
+
+[souce, bash]
+----
+docker exec -it kafka-wiki kafka-console-consumer.sh \
+  --bootstrap-server localhost:9092 \
+  --topic wikipedia-events \
+  --from-beginning
+----
+
+Run Streamlit app
+
+[source, bash]
+----
+streamlit run app.py
+----

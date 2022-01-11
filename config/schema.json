@@ -1,0 +1,61 @@
+{
+    "schemaName": "wikipedia",
+    "dimensionFieldSpecs": [
+      {
+        "name": "id",
+        "dataType": "STRING"
+      },
+      {
+        "name": "wiki",
+        "dataType": "STRING"
+      },
+      {
+        "name": "user",
+        "dataType": "STRING"
+      },
+      {
+        "name": "title",
+        "dataType": "STRING"
+      },
+      {
+        "name": "comment",
+        "dataType": "STRING"
+      },
+      {
+        "name": "stream",
+        "dataType": "STRING"
+      },
+      {
+        "name": "domain",
+        "dataType": "STRING"
+      },
+      {
+        "name": "topic",
+        "dataType": "STRING"
+      },
+      {
+        "name": "type",
+        "dataType": "STRING"
+      },
+      {
+        "name": "uri",
+        "dataType": "STRING"
+      },
+      {
+        "name": "bot",
+        "dataType": "BOOLEAN"
+      },
+      {
+        "name": "metaJson",
+        "dataType": "STRING"
+      }
+    ],
+    "dateTimeFieldSpecs": [
+      {
+        "name": "timestamp",
+        "dataType": "LONG",
+        "format": "1:MILLISECONDS:EPOCH",
+        "granularity": "1:MILLISECONDS"
+      }
+    ]
+  }
