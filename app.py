@@ -6,13 +6,7 @@ from datetime import datetime
 import plotly.express as px
 from streamlit_tags import st_tags
 
-# st.set_page_config(layout="wide", page_title="Wikipedia Updates")
-
-# Run the autorefresh about every 2000 milliseconds (2 seconds) and stop
-# after it's been refreshed 100 times.
-count = st_autorefresh(interval=5000, key="fizzbuzzcounter")
-
-
+st.set_page_config(layout="wide")
 st.title("Wikipedia Recent Changes")
 
 now = datetime.now()
@@ -134,6 +128,22 @@ def overview():
     </ul>
 
     """, unsafe_allow_html=True)
+
+    st.header("Recent Changes")
+
+    query = """
+    select "timestamp", user, title, domain
+    from wikievents 
+    order by wikievents."timestamp" desc
+    LIMIT 20
+    """
+
+    curs = conn.cursor()
+    curs.execute(query)
+    df = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
+    df['timestamp'] = df['timestamp'].apply(lambda timestamp: datetime.fromtimestamp(timestamp))
+
+    st.table(df)
 
 def whos_making_changes():
     st.header("Who's making changes?")
@@ -260,7 +270,21 @@ def drill_down():
 
     df = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
 
-    selected_user = st.selectbox('Select User', df["user"].values)
+    users = list(df["user"].values)
+
+    def select_user_callback():
+        st.session_state['selected_user'] = st.session_state.select_user  
+
+    if 'selected_user' not in st.session_state:
+        selected_user = st.selectbox('Select User', users, 
+            key='select_user', on_change=select_user_callback
+        )
+    else:
+        selected_user = st.selectbox('Select User', users, 
+          users.index(st.session_state.selected_user) if st.session_state.selected_user in users else 0, 
+          key='select_user',
+          on_change=select_user_callback
+        )
 
     curs = conn.cursor()
     curs.execute("""
@@ -316,7 +340,15 @@ PAGES = {
     "Where changes were made?": what_changes,
     "Drill Down By User": drill_down
 }
+
 st.sidebar.title('Navigation')
+
+agree = st.sidebar.checkbox('Auto Refresh?', True)
+
+if agree:
+     st_autorefresh(interval=5000, key="fizzbuzzcounter")
+
+
 selection = st.sidebar.radio("Go to", list(PAGES.keys()))
 page = PAGES[selection]
 page()
