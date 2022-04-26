@@ -5,6 +5,7 @@ from streamlit_autorefresh import st_autorefresh
 from datetime import datetime
 import plotly.express as px
 from streamlit_tags import st_tags
+import time
 
 st.set_page_config(layout="wide")
 
@@ -48,6 +49,24 @@ def overview():
         value=df_summary['domains1Min'].values[0],
         delta=float(df_summary['domains1Min'].values[0] - df_summary['domains1Min2Min'].values[0])
     )
+
+    query = """
+    select ToDateTime(DATETRUNC('minute', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, count(*)
+    from wikievents 
+	group by dateMin
+	order by dateMin desc
+	LIMIT 30
+    """
+
+    curs = conn.cursor()
+    curs.execute(query)
+    df_ts = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
+
+    fig = px.line(df_ts, x='dateMin', y="count(*)", color_discrete_sequence =['#0b263f'])
+    fig['layout'].update(margin=dict(l=0,r=0,b=0,t=40), title="Changes per minute")
+    fig.update_yaxes(range=[0, df_ts["count(*)"].max() * 1.1])
+    st.plotly_chart(fig, use_container_width=True)
+
 
     st.header("Recent Changes")
 
@@ -266,10 +285,17 @@ now = datetime.now()
 dt_string = now.strftime("%d %B %Y %H:%M:%S")
 st.sidebar.write(f"Last update: {dt_string}")
 
-agree = st.sidebar.checkbox('Auto Refresh?', True)
+if not "sleep_time" in st.session_state:
+    st.session_state.sleep_time = 2
 
-if agree:
-     st_autorefresh(interval=5000, key="fizzbuzzcounter")
+if not "auto_refresh" in st.session_state:
+    st.session_state.auto_refresh = True
+
+auto_refresh = st.sidebar.checkbox('Auto Refresh?', st.session_state.auto_refresh)
+
+if auto_refresh:
+    number = st.sidebar.number_input('Refresh rate in seconds', value=st.session_state.sleep_time)
+    st.session_state.sleep_time = number
 
 
 selection = st.sidebar.radio("Go to", list(PAGES.keys()))
@@ -283,3 +309,7 @@ section.main[tabindex='0'] div[data-testid='stVerticalBlock'] div.element-contai
 
 </style>
 """, unsafe_allow_html=True)
+
+if auto_refresh:
+    time.sleep(number)
+    st.experimental_rerun()
