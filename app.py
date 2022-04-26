@@ -7,39 +7,11 @@ import plotly.express as px
 from streamlit_tags import st_tags
 
 st.set_page_config(layout="wide")
-st.title("Wikipedia Recent Changes")
-
-now = datetime.now()
-dt_string = now.strftime("%d %B %Y %H:%M:%S")
-st.write(f"Last update: {dt_string}")
 
 conn = connect(host='localhost', port=8099, path='/query/sql', scheme='http')
 
 def overview():
     st.header("Overview")
-    st.markdown("""
-    <style>
-    ul.summary
-    {
-    display:flex;  
-    list-style:none;
-    margin: 0;
-    padding: 0;
-    }
-
-    ul.summary li {
-        margin: 0;
-        padding-right: 5px;
-        width: 150px;
-    }
-
-    ul.summary li:first-child {
-        padding-right: 20px;
-        width: 140px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
     query = """
     select count(*) FILTER(WHERE  ts > ago('PT1M')) AS events1Min,
            count(*) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS events1Min2Min,
@@ -288,7 +260,11 @@ PAGES = {
     "Drill Down By User": drill_down
 }
 
-st.sidebar.title('Navigation')
+st.sidebar.title('Wikipedia Recent Changes')
+
+now = datetime.now()
+dt_string = now.strftime("%d %B %Y %H:%M:%S")
+st.sidebar.write(f"Last update: {dt_string}")
 
 agree = st.sidebar.checkbox('Auto Refresh?', True)
 
@@ -299,3 +275,11 @@ if agree:
 selection = st.sidebar.radio("Go to", list(PAGES.keys()))
 page = PAGES[selection]
 page()
+st.markdown("""
+<style>
+section.main[tabindex='0'] div[data-testid='stVerticalBlock'] div.element-container:nth-child(1):has(> iframe) {
+    display: none;
+}
+
+</style>
+""", unsafe_allow_html=True)
