@@ -40,108 +40,55 @@ def overview():
     </style>
     """, unsafe_allow_html=True)
 
-
     query = """
-    select count(*) AS changes, distinctcount(user) AS users, distinctcount(domain) AS domains
+    select count(*) FILTER(WHERE  ts > ago('PT1M')) AS events1Min,
+           count(*) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS events1Min2Min,
+           distinctcount(user) FILTER(WHERE  ts > ago('PT1M')) AS users1Min,
+           distinctcount(user) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS users1Min2Min,
+           distinctcount(domain) FILTER(WHERE  ts > ago('PT1M')) AS domains1Min,
+           distinctcount(domain) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS domains1Min2Min
     from wikievents 
-    where wikievents."timestamp" > cast(ago('PT1M') as long) / 1000
+    where ts > ago('PT2M')
+    limit 1
     """
 
     curs = conn.cursor()
     curs.execute(query)
-    df_last_1min = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
+    df_summary = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
 
-    query = """
-    select count(*) AS changes, distinctcount(user) AS users, distinctcount(domain) AS domains
-    from wikievents 
-    where wikievents."timestamp" > cast(ago('PT5M') as long) / 1000
-    """
 
-    curs = conn.cursor()
-    curs.execute(query)
-    df_last_5min = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
+    metric1, metric2, metric3 = st.columns(3)
 
-    query = """
-    select count(*) AS changes, distinctcount(user) AS users, distinctcount(domain) AS domains
-    from wikievents 
-    where wikievents."timestamp" > cast(ago('PT10M') as long) / 1000
-    """
+    metric1.metric(
+        label="Changes",
+        value=df_summary['events1Min'].values[0],
+        delta=float(df_summary['events1Min'].values[0] - df_summary['events1Min2Min'].values[0])
+    )
 
-    curs = conn.cursor()
-    curs.execute(query)
-    df_last_10min = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
+    metric2.metric(
+        label="Users",
+        value=df_summary['users1Min'].values[0],
+        delta=float(df_summary['users1Min'].values[0] - df_summary['users1Min2Min'].values[0])
+    )
 
-    query = """
-    select count(*) AS changes, distinctcount(user) AS users, distinctcount(domain) AS domains 
-    from wikievents 
-    where wikievents."timestamp" > cast(ago('PT1H') as long) / 1000
-    """
-
-    curs = conn.cursor()
-    curs.execute(query)
-    df_last_1hour = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
-
-    query = """
-    select count(*) AS changes, distinctcount(user) AS users, distinctcount(domain) AS domains 
-    from wikievents 
-    """
-
-    curs = conn.cursor()
-    curs.execute(query)
-    df_all = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
-
-    st.markdown(f"""
-
-    <ul class="summary">
-    <li><em>Last 1 min</em></li>
-    <li>Changes: <strong>{'{:,}'.format(df_last_1min['changes'].values[0]).ljust(20)}</strong> </li>
-    <li>Users: <strong>{df_last_1min['users'].values[0]:,}</strong> </li>
-    <li>Domains: <strong>{df_last_1min['domains'].values[0]:,}</strong> </li>
-    </ul>
-
-    <ul class="summary">
-    <li><em>Last 5 mins</em></li>
-    <li>Changes: <strong>{'{:,}'.format(df_last_5min['changes'].values[0]).ljust(20)}</strong> </li>
-    <li>Users: <strong>{df_last_5min['users'].values[0]:,}</strong> </li>
-    <li>Domains: <strong>{df_last_5min['domains'].values[0]:,}</strong> </li>
-    </ul>
-
-    <ul class="summary">
-    <li><em>Last 10 mins</em></li>
-    <li>Changes: <strong>{'{:,}'.format(df_last_10min['changes'].values[0]).ljust(20)}</strong> </li>
-    <li>Users: <strong>{df_last_10min['users'].values[0]:,}</strong> </li>
-    <li>Domains: <strong>{df_last_10min['domains'].values[0]:,}</strong> </li>
-    </ul>
-
-    <ul class="summary">
-    <li><em>Last 1 hour</em></li>
-    <li>Changes: <strong>{'{:,}'.format(df_last_1hour['changes'].values[0]).ljust(20)}</strong> </li>
-    <li>Users: <strong>{df_last_1hour['users'].values[0]:,}</strong> </li>
-    <li>Domains: <strong>{df_last_1hour['domains'].values[0]:,}</strong> </li>
-    </ul>
-
-    <ul class="summary">
-    <li><em>All Time</em></li>
-    <li>Changes: <strong>{'{:,}'.format(df_all['changes'].values[0]).ljust(20)}</strong> </li>
-    <li>Users: <strong>{df_all['users'].values[0]:,}</strong> </li>
-    <li>Domains: <strong>{df_all['domains'].values[0]:,}</strong> </li>
-    </ul>
-
-    """, unsafe_allow_html=True)
+    metric3.metric(
+        label="Domains",
+        value=df_summary['domains1Min'].values[0],
+        delta=float(df_summary['domains1Min'].values[0] - df_summary['domains1Min2Min'].values[0])
+    )
 
     st.header("Recent Changes")
 
     query = """
-    select "timestamp", user, title, domain
+    select ts, user, title, domain
     from wikievents 
-    order by wikievents."timestamp" desc
+    order by ts desc
     LIMIT 20
     """
 
     curs = conn.cursor()
     curs.execute(query)
     df = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
-    df['timestamp'] = df['timestamp'].apply(lambda timestamp: datetime.fromtimestamp(timestamp))
 
     st.table(df)
 
@@ -265,7 +212,7 @@ def drill_down():
     from wikievents 
     group by user
     order by changes DESC
-    LIMIT 20
+    LIMIT 30
     """)
 
     df = pd.DataFrame(curs, columns=[item[0] for item in curs.description])

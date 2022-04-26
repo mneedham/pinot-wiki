@@ -2,7 +2,7 @@
     "tableName": "wikievents",
     "tableType": "REALTIME",
     "segmentsConfig": {
-      "timeColumnName": "timestamp",
+      "timeColumnName": "ts",
       "schemaName": "wikipedia",
       "replication": "1",
       "replicasPerPartition": "1"
@@ -69,6 +69,10 @@
         {
           "columnName": "uri",
           "transformFunction": "JSONPATH(metaJson, '$.uri')"
+        },
+        {
+          "columnName": "ts",
+          "transformFunction": "\"timestamp\" * 1000"
         }
       ]
     },
