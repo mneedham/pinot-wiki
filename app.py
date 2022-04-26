@@ -26,6 +26,7 @@ def overview():
     """
 
     curs = conn.cursor()
+
     curs.execute(query)
     df_summary = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
 
@@ -51,20 +52,22 @@ def overview():
     )
 
     query = """
-    select ToDateTime(DATETRUNC('minute', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, count(*)
+    select ToDateTime(DATETRUNC('minute', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, count(*) AS changes, 
+           distinctcount(user) AS users,
+           distinctcount(domain) AS domains
     from wikievents 
 	group by dateMin
 	order by dateMin desc
 	LIMIT 30
     """
 
-    curs = conn.cursor()
     curs.execute(query)
     df_ts = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
+    df_ts_melt = pd.melt(df_ts, id_vars=['dateMin'], value_vars=['changes', 'users', 'domains'])
 
-    fig = px.line(df_ts, x='dateMin', y="count(*)", color_discrete_sequence =['#0b263f'])
-    fig['layout'].update(margin=dict(l=0,r=0,b=0,t=40), title="Changes per minute")
-    fig.update_yaxes(range=[0, df_ts["count(*)"].max() * 1.1])
+    fig = px.line(df_ts_melt, x='dateMin', y="value", color='variable', color_discrete_sequence =['blue', 'red', 'green'])
+    fig['layout'].update(margin=dict(l=0,r=0,b=0,t=40), title="Changes/Users/Domains per minute")
+    fig.update_yaxes(range=[0, df_ts["changes"].max() * 1.1])
     st.plotly_chart(fig, use_container_width=True)
 
 
@@ -77,9 +80,10 @@ def overview():
     LIMIT 20
     """
 
-    curs = conn.cursor()
     curs.execute(query)
     df = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
+
+    curs.close()
 
     st.table(df)
 
@@ -109,7 +113,6 @@ def whos_making_changes():
     LIMIT 10
     """
 
-    curs = conn.cursor()
     curs.execute(query)
     df = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
 
@@ -128,7 +131,6 @@ def whos_making_changes():
     LIMIT 10
     """
 
-    curs = conn.cursor()
     curs.execute(query)
     df = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
 
@@ -147,14 +149,16 @@ def whos_making_changes():
     LIMIT 10
     """
 
-    curs = conn.cursor()
     curs.execute(query)
     df = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
 
+    curs.close()
 
     fig = px.bar(df, x="changes", y="user", color_discrete_sequence =['#0b263f']*len(df), title="Top Non Bots")
     fig.update_yaxes(categoryorder='max ascending')
     fig['layout'].update(margin=dict(l=0,r=0,b=0,t=40))
+
+
     st.write(fig)
 
 def what_changes():
@@ -185,9 +189,10 @@ def what_changes():
     LIMIT 10
     """
 
-    curs = conn.cursor()
     curs.execute(query)
     df = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
+
+    curs.close()
 
     fig = px.bar(df, x="changes", y="type", color_discrete_sequence =['#0b263f']*len(df), title="Types of changes")
     fig.update_yaxes(categoryorder='max ascending')
@@ -245,7 +250,6 @@ def drill_down():
     LIMIT 10
     """
 
-    curs = conn.cursor()
     curs.execute(query, {"user": selected_user})
     df = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
 
@@ -263,9 +267,10 @@ def drill_down():
     LIMIT 10
     """
 
-    curs = conn.cursor()
     curs.execute(query, {"user": selected_user})
     df = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
+
+    curs.close()
 
     fig = px.bar(df, x="changes", y="type", color_discrete_sequence =['#0b263f']*len(df), title="Types of changes")
     fig.update_yaxes(categoryorder='max ascending')
