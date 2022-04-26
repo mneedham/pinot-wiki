@@ -21,6 +21,11 @@ Ingest Wikipedia events
 
 [source, bash]
 ----
+pipenv shell
+----
+
+[source, bash]
+----
 python wiki_to_kafka.py
 ----
 
