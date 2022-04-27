@@ -56,6 +56,7 @@ def overview():
            distinctcount(user) AS users,
            distinctcount(domain) AS domains
     from wikievents 
+    where ts > ago('PT1H')
 	group by dateMin
 	order by dateMin desc
 	LIMIT 30
