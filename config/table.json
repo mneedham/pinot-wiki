@@ -22,7 +22,7 @@
       "loadMode": "MMAP",
       "streamConfigs": {
         "streamType": "kafka",
-        "stream.kafka.topic.name": "wikipedia-events",
+        "stream.kafka.topic.name": "wiki_events",
         "stream.kafka.broker.list": "kafka-wiki:9093",
         "stream.kafka.consumer.type": "lowlevel",
         "stream.kafka.consumer.prop.auto.offset.reset": "smallest",

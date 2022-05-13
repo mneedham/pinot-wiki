@@ -4,21 +4,19 @@ from pinotdb import connect
 import plotly.express as px
 
 st.set_page_config(layout="wide")
+st.header("Wikipedia Recent Changes")
 
 conn = connect(host='localhost', port=8099, path='/query/sql', scheme='http')
 
-st.header("Wikipedia Recent Changes")
-
 # Find changes that happened in the last 1 minute
 # Find changes that happened between 1 and 2 minutes ago
-
 query = """
 select count(*) FILTER(WHERE  ts > ago('PT1M')) AS events1Min,
-        count(*) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS events1Min2Min,
-        distinctcount(user) FILTER(WHERE  ts > ago('PT1M')) AS users1Min,
-        distinctcount(user) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS users1Min2Min,
-        distinctcount(domain) FILTER(WHERE  ts > ago('PT1M')) AS domains1Min,
-        distinctcount(domain) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS domains1Min2Min
+       count(*) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS events1Min2Min,
+       distinctcount(user) FILTER(WHERE  ts > ago('PT1M')) AS users1Min,
+       distinctcount(user) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS users1Min2Min,
+       distinctcount(domain) FILTER(WHERE  ts > ago('PT1M')) AS domains1Min,
+       distinctcount(domain) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS domains1Min2Min
 from wikievents 
 where ts > ago('PT2M')
 limit 1

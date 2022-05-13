@@ -7,21 +7,22 @@ Spin up all components
 docker-compose up
 ----
 
-Add Pinot Table
-
-[source, bash]
-----
-docker exec -it pinot-controller-wiki bin/pinot-admin.sh AddTable \
-  -tableConfigFile /config/table.json \
-  -schemaFile /config/schema.json \
-  -exec
-----
-
 Ingest Wikipedia events
 
 [source, bash]
 ----
 pipenv shell
+----
+
+Create Kafka topic
+
+[source, bash]
+----
+docker exec -it kafka-wiki kafka-topics.sh \
+  --bootstrap-server localhost:9092 \
+  --partitions 5 \
+  --topic wiki_events \
+  --create 
 ----
 
 [source, bash]
@@ -31,12 +32,29 @@ python wiki_to_kafka.py
 
 Check Wikipedia events are ingesting
 
+[source, bash]
+----
+docker exec -it kafka-wiki kafka-run-class.sh kafka.tools.GetOffsetShell \
+  --broker-list localhost:9092 \
+  --topic wiki_events
+----
+
 [souce, bash]
 ----
 docker exec -it kafka-wiki kafka-console-consumer.sh \
   --bootstrap-server localhost:9092 \
-  --topic wikipedia-events \
+  --topic wiki_events \
   --from-beginning
+----
+
+Add Pinot Table
+
+[source, bash]
+----
+docker exec -it pinot-controller-wiki bin/pinot-admin.sh AddTable \
+  -tableConfigFile /config/table.json \
+  -schemaFile /config/schema.json \
+  -exec
 ----
 
 Run Streamlit app

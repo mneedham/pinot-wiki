@@ -1,10 +1,8 @@
 import pandas as pd
 import streamlit as st
 from pinotdb import connect
-from streamlit_autorefresh import st_autorefresh
 from datetime import datetime
 import plotly.express as px
-from streamlit_tags import st_tags
 import time
 
 st.set_page_config(layout="wide")

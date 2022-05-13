@@ -1,10 +1,8 @@
 import json
-import pprint
 import sseclient
 import datetime
 import requests
 import time
-
 from confluent_kafka import Producer
 
 def with_requests(url, headers):
@@ -21,7 +19,6 @@ def json_serializer(obj):
         return obj.isoformat()
     raise "Type %s not serializable" % type(obj)
 
-# Producer instance
 producer = Producer({'bootstrap.servers': 'localhost:9092'})
 
 url = 'https://stream.wikimedia.org/v2/stream/recentchange'
@@ -36,7 +33,7 @@ while True:
         for event in client.events():
             stream = json.loads(event.data)
             payload = json.dumps(stream, default=json_serializer, ensure_ascii=False).encode('utf-8')
-            producer.produce(topic='wikipedia-events', key=str(stream['meta']['id']), value=payload, callback=acked)
+            producer.produce(topic='wiki_events', key=str(stream['meta']['id']), value=payload, callback=acked)
 
             events_processed += 1
             if events_processed % 100 == 0:
