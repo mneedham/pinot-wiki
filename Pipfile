@@ -13,7 +13,6 @@ streamlit = "*"
 plotly = "*"
 pinotdb = "*"
 pandas = "*"
-streamlit-autorefresh = "*"
 requests = "*"
 streamlit-tags = "*"
 
