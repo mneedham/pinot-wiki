@@ -1,10 +1,8 @@
 import pandas as pd
 import streamlit as st
 from pinotdb import connect
-from streamlit_autorefresh import st_autorefresh
 from datetime import datetime
 import plotly.express as px
-from streamlit_tags import st_tags
 import time
 
 st.set_page_config(layout="wide")
@@ -35,19 +33,19 @@ def overview():
 
     metric1.metric(
         label="Changes",
-        value=df_summary['events1Min'].values[0],
+        value=float(df_summary['events1Min'].values[0]),
         delta=float(df_summary['events1Min'].values[0] - df_summary['events1Min2Min'].values[0])
     )
 
     metric2.metric(
         label="Users",
-        value=df_summary['users1Min'].values[0],
+        value=float(df_summary['users1Min'].values[0]),
         delta=float(df_summary['users1Min'].values[0] - df_summary['users1Min2Min'].values[0])
     )
 
     metric3.metric(
         label="Domains",
-        value=df_summary['domains1Min'].values[0],
+        value=float(df_summary['domains1Min'].values[0]),
         delta=float(df_summary['domains1Min'].values[0] - df_summary['domains1Min2Min'].values[0])
     )
 
