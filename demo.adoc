@@ -133,7 +133,7 @@ Interesting things to point out:
 `config/schema.json`
 
 * Explain the different field types: dimension, metric, timestamp
-* Explain the differnet data types that we can use
+* Explain the different data types that we can use
 
 `config/table.json`
 
