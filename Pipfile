@@ -14,7 +14,6 @@ plotly = "*"
 pinotdb = "*"
 pandas = "*"
 requests = "*"
-streamlit-tags = "*"
 
 [requires]
 python_version = "3.8"
