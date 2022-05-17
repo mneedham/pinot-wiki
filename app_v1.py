@@ -6,7 +6,7 @@ import plotly.express as px
 st.set_page_config(layout="wide")
 st.header("Wikipedia Recent Changes")
 
-conn = connect(host='localhost', port=8099, path='/query/sql', scheme='http')
+conn = connect(host='localhost', port=9000, path='/sql', scheme='http')
 
 # Find changes that happened in the last 1 minute
 # Find changes that happened between 1 and 2 minutes ago

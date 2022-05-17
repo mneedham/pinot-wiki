@@ -7,7 +7,7 @@ import time
 
 st.set_page_config(layout="wide")
 
-conn = connect(host='localhost', port=8099, path='/query/sql', scheme='http')
+conn = connect(host='localhost', port=9000, path='/sql', scheme='http')
 
 st.header("Wikipedia Recent Changes")
 

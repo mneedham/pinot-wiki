@@ -1,25 +1,38 @@
-= Demo Script
+= Demo Script (Non Docker)
 
 In this demo we'll show how to build a real-time analytics dashboard using Apache Kafka, Apache Pinot, and Streamlit.
 
-image::images/architecture.png[]
+image::../images/architecture.png[]
 
 == Setup
 
-We're going to run the two key pieces of infrastructure - Pinot and Kafka - using Docker Compose.
-Let's quickly go through the Docker Compose file.
-Open `docker-compose.yml`
-
-Interesting things to point out:
-
-* Use of Zookeeper by both Kafka and Pinot
-* The Pinot Controller uses the `data` directory as a Deep Store (place where segments are persisted outside of Pinot Servers). This would usually be on S3, HDFS, Google Cloud Storage, or others, but for the demo we'll use our host.
-
-Run the Docker Compose file:
+Download the Pinot binary from https://pinot.apache.org/download/.
+Unpack the binary and start Pinot:
 
 [source, bash]
 ----
-docker-compose up
+tar -xvf apache-pinot-0.10.0-src.tar.gz
+cd apache-pinot-0.10.0-bin
+./bin/pinot-admin.sh QuickStart -type EMPTY
+----
+
+Download the Kafka binary from https://kafka.apache.org/quickstart.
+Unpack the binary:
+
+[source, bash]
+----
+tar -xvf kafka_2.13-3.1.1.tgz
+cd kafka_2.13-3.1.1
+----
+
+[source, bash]
+----
+./bin/zookeeper-server-start.sh config/zookeeper.properties
+----
+
+[source, bash]
+----
+./bin/kafka-server-start.sh config/server.properties
 ----
 
 Open up a new tab on the terminal and install Python dependencies:
@@ -60,10 +73,9 @@ So we've been able to process the events from the streaming API and now we need 
 Next we're going to ingest events into Kafka.
 For the purposes of this demo we want to have a topic with multiple partitions, so let's create that:
 
-
 [source, bash]
 ----
-docker exec -it kafka-wiki kafka-topics.sh \
+./bin/kafka-topics.sh \
   --bootstrap-server localhost:9092 \
   --partitions 5 \
   --topic wiki_events \
@@ -74,7 +86,7 @@ And let's do a quick check on the offsets for each of the partitions:
 
 [source, bash]
 ----
-docker exec -it kafka-wiki kafka-run-class.sh kafka.tools.GetOffsetShell \
+./bin/kafka-run-class.sh kafka.tools.GetOffsetShell \
   --broker-list localhost:9092 \
   --topic wiki_events
 ----
@@ -103,7 +115,7 @@ Check that the offsets are now increasing:
 
 [source, bash]
 ----
-docker exec -it kafka-wiki kafka-run-class.sh kafka.tools.GetOffsetShell \
+./bin/kafka-run-class.sh kafka.tools.GetOffsetShell \
   --broker-list localhost:9092 \
   --topic wiki_events
 ----
@@ -112,7 +124,7 @@ You can also optionally show that the events are flowing into Kafka:
 
 [source, bash]
 ----
-docker exec -it kafka-wiki kafka-console-consumer.sh \
+./bin/kafka-console-consumer.sh \
   --bootstrap-server localhost:9092 \
   --topic wiki_events
 ----
@@ -145,9 +157,9 @@ Add the table and schema:
 
 [source, bash]
 ----
-docker exec -it pinot-controller-wiki bin/pinot-admin.sh AddTable \
-  -tableConfigFile /config/table.json \
-  -schemaFile /config/schema.json \
+./bin/pinot-admin.sh AddTable \
+  -tableConfigFile /path/to/pinot-wiki/config/table-local.json \
+  -schemaFile /path/to/pinot-wiki/config/schema.json \
   -exec
 ----
 
