@@ -5,7 +5,6 @@ from pinotdb import connect
 from dash_utils import add_delta_trace, add_trace
 import plotly.express as px
 
-
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = Dash(__name__, external_stylesheets=external_stylesheets)
 app.title = "Wiki Recent Changes Dashboard"
