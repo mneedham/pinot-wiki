@@ -2,7 +2,7 @@
 
 In this demo we'll show how to build a real-time analytics dashboard using Apache Kafka, Apache Pinot, and Streamlit.
 
-image::images/architecture.png[]
+image::../images/architecture.png[]
 
 == Setup
 
