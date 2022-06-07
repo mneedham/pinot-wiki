@@ -1,4 +1,4 @@
-= Demo Script
+= Demo Script (Docker)
 
 In this demo we'll show how to build a real-time analytics dashboard using Apache Kafka, Apache Pinot, and Streamlit.
 

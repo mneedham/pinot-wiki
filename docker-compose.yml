@@ -55,5 +55,8 @@ services:
     container_name: "pinot-server-wiki"
     volumes:
       - ./config:/config
+    ports:
+      - "8098:8098"
+      - "8097:8097"
     depends_on:
       - pinot-broker
