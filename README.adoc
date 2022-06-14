@@ -7,11 +7,15 @@ Spin up all components
 docker-compose up
 ----
 
+Setup Python
+
 Ingest Wikipedia events
 
 [source, bash]
 ----
-pipenv shell
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
 ----
 
 Create Kafka topic
@@ -24,6 +28,8 @@ docker exec -it kafka-wiki kafka-topics.sh \
   --topic wiki_events \
   --create 
 ----
+
+Ingest Wikipedia events
 
 [source, bash]
 ----
