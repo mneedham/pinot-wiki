@@ -70,6 +70,8 @@ docker exec -it pinot-controller-wiki bin/pinot-admin.sh AddTable \
   -exec
 ----
 
+Open the Pinot UI http://localhost:9000/
+
 Run Streamlit app
 
 [source, bash]
