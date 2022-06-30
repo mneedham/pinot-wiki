@@ -13,11 +13,8 @@ app.title = "Wiki Recent Changes Dashboard"
 connection = connect(host="localhost", port="8099", path="/query/sql", scheme=( "http"))
 
 
-@app.callback([
-    Output(component_id='indicators', component_property='figure')
-  ],[
-    Input('interval-component', 'n_intervals')
-])
+@app.callback(Output(component_id='indicators', component_property='figure'),
+              Input('interval-component', 'n_intervals'))
 def indicators(n):
     # Find changes that happened in the last 1 minute
     # Find changes that happened between 1 and 2 minutes ago
@@ -51,13 +48,10 @@ def indicators(n):
         fig.update_layout(grid = {"rows": 1, "columns": 3,  'pattern': "independent"},) 
     else:
         fig.update_layout(annotations = [{"text": "No events found", "xref": "paper", "yref": "paper", "showarrow": False, "font": {"size": 28}}])
-    return fig,
+    return fig
 
-@app.callback([
-    Output(component_id='time-series', component_property='figure')
-  ],[
-    Input('interval-component', 'n_intervals')
-])
+@app.callback(Output(component_id='time-series', component_property='figure'),
+              Input('interval-component', 'n_intervals'))
 def time_series(n):
     query = """
     select ToDateTime(DATETRUNC('minute', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, count(*) AS changes, 
@@ -80,15 +74,13 @@ def time_series(n):
     line_chart = px.line(df_ts_melt, x='dateMin', y="value", color='variable', color_discrete_sequence =['blue', 'red', 'green'])
     line_chart['layout'].update(margin=dict(l=0,r=0,b=0,t=40), title="Changes/Users/Domains per minute")
     line_chart.update_yaxes(range=[0, df_ts["changes"].max() * 1.1])
-    return line_chart,
+    return line_chart
 
-@app.callback([
-    Output(component_id='latest-timestamp', component_property='children')
-  ],[
-    Input('interval-component', 'n_intervals')
-])
+@app.callback(
+    Output(component_id='latest-timestamp', component_property='children'),
+    Input('interval-component', 'n_intervals'))
 def timestamp(n):
-    return [html.Span(f"Last updated: {datetime.datetime.now()}")]
+    return html.Span(f"Last updated: {datetime.datetime.now()}")
 
 app.layout = html.Div([
     html.H1("Wiki Recent Changes Dashboard", style={'text-align': 'center'}),

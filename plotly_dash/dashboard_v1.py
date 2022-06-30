@@ -1,5 +1,5 @@
 import pandas as pd
-from dash import Dash, html, dash_table, dcc
+from dash import Dash, html, dcc
 import plotly.graph_objects as go
 from pinotdb import connect
 from dash_utils import add_delta_trace, add_trace
@@ -50,7 +50,7 @@ select ToDateTime(DATETRUNC('minute', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, co
     distinctcount(user) AS users,
     distinctcount(domain) AS domains
 from wikievents 
-where ts > ago('PT1H')
+where ts > ago('PT8M')
 group by dateMin
 order by dateMin desc
 LIMIT 30
