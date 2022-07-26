@@ -44,10 +44,6 @@
       {
         "name": "bot",
         "dataType": "BOOLEAN"
-      },
-      {
-        "name": "metaJson",
-        "dataType": "STRING"
       }
     ],
     "dateTimeFieldSpecs": [

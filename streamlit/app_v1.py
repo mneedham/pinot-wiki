@@ -69,9 +69,10 @@ else:
 
     curs.execute(query)
     df_ts = pd.DataFrame(curs, columns=[item[0] for item in curs.description])
-    df_ts_melt = pd.melt(df_ts, id_vars=['dateMin'], value_vars=['changes', 'users', 'domains'])
+    df_ts_melt = pd.melt(frame=df_ts, id_vars=['dateMin'], value_vars=['changes', 'users', 'domains'])
 
-    fig = px.line(df_ts_melt, x='dateMin', y="value", color='variable', color_discrete_sequence =['blue', 'red', 'green'])
-    fig['layout'].update(margin=dict(l=0,r=0,b=0,t=40), title="Changes/Users/Domains per minute")
+    fig = px.line(data_frame=df_ts_melt, x='dateMin', y="value", color='variable', color_discrete_sequence =['blue', 'red', 'green'])    
     fig.update_yaxes(range=[0, df_ts["changes"].max() * 1.1])
+    fig['layout'].update(margin=dict(l=0,r=0,b=0,t=40), title="Changes/Users/Domains per minute")
+
     st.plotly_chart(fig, use_container_width=True)
