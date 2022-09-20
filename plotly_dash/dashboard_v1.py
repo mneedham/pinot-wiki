@@ -46,7 +46,7 @@ else:
 
 
 query = """
-select ToDateTime(DATETRUNC('minute', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, count(*) AS changes, 
+select ToDateTime(DATETRUNC('MINUTE', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, count(*) AS changes, 
     distinctcount(user) AS users,
     distinctcount(domain) AS domains
 from wikievents 

@@ -32,7 +32,7 @@ Create Kafka topic
 docker exec -it kafka-wiki kafka-topics.sh \
   --bootstrap-server localhost:9092 \
   --partitions 5 \
-  --topic wiki_events \
+  --topic wiki-events \
   --create 
 ----
 
@@ -49,15 +49,12 @@ Check Wikipedia events are ingesting
 ----
 docker exec -it kafka-wiki kafka-run-class.sh kafka.tools.GetOffsetShell \
   --broker-list localhost:9092 \
-  --topic wiki_events
+  --topic wiki-events
 ----
 
 [souce, bash]
 ----
-docker exec -it kafka-wiki kafka-console-consumer.sh \
-  --bootstrap-server localhost:9092 \
-  --topic wiki_events \
-  --from-beginning
+kafkacat -C -b localhost:9092 -t wiki-events
 ----
 
 Add Pinot Table

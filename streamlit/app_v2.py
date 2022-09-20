@@ -15,8 +15,6 @@ now = datetime.now()
 dt_string = now.strftime("%d %B %Y %H:%M:%S")
 st.write(f"Last update: {dt_string}")
 
-# Use session state to keep track of whether we need to auto refresh the page and the refresh frequency
-
 if not "sleep_time" in st.session_state:
     st.session_state.sleep_time = 2
 
@@ -29,16 +27,13 @@ if auto_refresh:
     number = st.number_input('Refresh rate in seconds', value=st.session_state.sleep_time)
     st.session_state.sleep_time = number
 
-# Find changes that happened in the last 1 minute
-# Find changes that happened between 1 and 2 minutes ago
-
 query = """
 select count(*) FILTER(WHERE  ts > ago('PT1M')) AS events1Min,
-        count(*) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS events1Min2Min,
-        distinctcount(user) FILTER(WHERE  ts > ago('PT1M')) AS users1Min,
-        distinctcount(user) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS users1Min2Min,
-        distinctcount(domain) FILTER(WHERE  ts > ago('PT1M')) AS domains1Min,
-        distinctcount(domain) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS domains1Min2Min
+       count(*) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS events1Min2Min,
+       distinctcount(user) FILTER(WHERE  ts > ago('PT1M')) AS users1Min,
+       distinctcount(user) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS users1Min2Min,
+       distinctcount(domain) FILTER(WHERE  ts > ago('PT1M')) AS domains1Min,
+       distinctcount(domain) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS domains1Min2Min
 from wikievents 
 where ts > ago('PT2M')
 limit 1
@@ -79,9 +74,9 @@ else:
     # Find all the changes by minute in the last hour
 
     query = """
-    select ToDateTime(DATETRUNC('minute', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, count(*) AS changes, 
-        distinctcount(user) AS users,
-        distinctcount(domain) AS domains
+    select ToDateTime(DATETRUNC('MINUTE', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, count(*) AS changes, 
+           distinctcount(user) AS users,
+           distinctcount(domain) AS domains
     from wikievents 
     where ts > ago('PT1H')
     group by dateMin
@@ -98,7 +93,6 @@ else:
     fig.update_yaxes(range=[0, df_ts["changes"].max() * 1.1])
     st.plotly_chart(fig, use_container_width=True)
 
-# Refresh the page
 if auto_refresh:
     time.sleep(number)
     st.experimental_rerun()

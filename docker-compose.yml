@@ -45,7 +45,7 @@ services:
     volumes:
       - ./config:/config
     ports:
-      - "8099:8099"
+      - "8099:8099"      
     depends_on:
       - pinot-controller
   pinot-server:
@@ -57,6 +57,5 @@ services:
       - ./config:/config
     ports:
       - "8098:8098"
-      - "8097:8097"
     depends_on:
       - pinot-broker

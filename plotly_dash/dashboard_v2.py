@@ -1,5 +1,5 @@
 import pandas as pd
-from dash import Dash, html, dash_table, dcc, Input, Output
+from dash import Dash, html, dcc, Input, Output
 import plotly.graph_objects as go
 from pinotdb import connect
 from dash_utils import add_delta_trace, add_trace
@@ -54,7 +54,7 @@ def indicators(n):
               Input('interval-component', 'n_intervals'))
 def time_series(n):
     query = """
-    select ToDateTime(DATETRUNC('minute', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, count(*) AS changes, 
+    select ToDateTime(DATETRUNC('MINUTE', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, count(*) AS changes, 
         distinctcount(user) AS users,
         distinctcount(domain) AS domains
     from wikievents 

@@ -57,11 +57,11 @@ else:
     # Find all the changes by minute in the last hour
 
     query = """
-    select ToDateTime(DATETRUNC('minute', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, count(*) AS changes, 
+    select ToDateTime(DATETRUNC('MINUTE', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, count(*) AS changes, 
         distinctcount(user) AS users,
         distinctcount(domain) AS domains
     from wikievents 
-    where ts > ago('PT1H')
+    where DATETRUNC('MINUTE', ts) > ago('PT1H')
     group by dateMin
     order by dateMin desc
     LIMIT 30
