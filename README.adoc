@@ -14,6 +14,13 @@ Spin up all components
 docker-compose up
 ----
 
+or on the Mac M1:
+
+[source, bash]
+----
+docker-compose -f docker-compose-m1.yml up
+----
+
 Setup Python
 
 Ingest Wikipedia events
