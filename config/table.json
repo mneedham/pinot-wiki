@@ -1,5 +1,5 @@
 {
-    "tableName": "wikievents",
+    "tableName": "wikipedia",
     "tableType": "REALTIME",
     "segmentsConfig": {
       "timeColumnName": "ts",

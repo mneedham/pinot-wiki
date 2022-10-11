@@ -17,7 +17,7 @@ select count(*) FILTER(WHERE  ts > ago('PT1M')) AS events1Min,
        distinctcount(user) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS users1Min2Min,
        distinctcount(domain) FILTER(WHERE  ts > ago('PT1M')) AS domains1Min,
        distinctcount(domain) FILTER(WHERE  ts <= ago('PT1M') AND ts > ago('PT2M')) AS domains1Min2Min
-from wikievents 
+from wikipedia 
 where ts > ago('PT2M')
 limit 1
 """
@@ -60,7 +60,7 @@ else:
     select ToDateTime(DATETRUNC('MINUTE', ts), 'yyyy-MM-dd hh:mm:ss') AS dateMin, count(*) AS changes, 
         distinctcount(user) AS users,
         distinctcount(domain) AS domains
-    from wikievents 
+    from wikipedia 
     where DATETRUNC('MINUTE', ts) > ago('PT1H')
     group by dateMin
     order by dateMin desc
