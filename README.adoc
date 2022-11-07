@@ -32,22 +32,11 @@ source venv/bin/activate
 pip install -r requirements.txt
 ----
 
-Create Kafka topic
-
-[source, bash]
-----
-docker exec -it kafka-wiki kafka-topics.sh \
-  --bootstrap-server localhost:9092 \
-  --partitions 5 \
-  --topic wiki-events \
-  --create 
-----
-
 Ingest Wikipedia events
 
 [source, bash]
 ----
-python wiki_to_kafka.py
+python wiki_to_pulsar.py
 ----
 
 Donwload Pulsar
@@ -61,7 +50,7 @@ Check Wikipedia events are ingesting
 
 [souce, bash]
 ----
-pulsar-client consume wiki-events -s mark -n 0
+pulsar-client consume wiki-events -s pinot-subscription -n 0
 ----
 
 Add Pinot Table
