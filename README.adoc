@@ -36,7 +36,7 @@ Ingest Wikipedia events
 
 [source, bash]
 ----
-python wiki_to_kafka.py
+python wiki_to_pulsar.py
 ----
 
 Donwload Pulsar
