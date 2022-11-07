@@ -7,6 +7,8 @@ Clone repository
 git clone git@github.com:mneedham/pinot-wiki.git && cd pinot-wiki
 ----
 
+Download Pinot/Pulsar connector (shaded.jar) from https://search.maven.org/search?q=a:pinot-pulsar and copy it in the `plugins` directory. 
+
 Spin up all components
 
 [source, bash]
@@ -22,8 +24,6 @@ docker-compose -f docker-compose-m1.yml up
 ----
 
 Setup Python
-
-Ingest Wikipedia events
 
 [source, bash]
 ----
@@ -52,16 +52,9 @@ python wiki_to_kafka.py
 
 Check Wikipedia events are ingesting
 
-[source, bash]
-----
-docker exec -it kafka-wiki kafka-run-class.sh kafka.tools.GetOffsetShell \
-  --broker-list localhost:9092 \
-  --topic wiki-events
-----
-
 [souce, bash]
 ----
-kafkacat -C -b localhost:9092 -t wiki-events
+./apache-pulsar-2.10.2/bin/pulsar-client consume wiki-events -s mark -n 0
 ----
 
 Add Pinot Table
@@ -69,7 +62,7 @@ Add Pinot Table
 [source, bash]
 ----
 docker exec -it pinot-controller-wiki bin/pinot-admin.sh AddTable \
-  -tableConfigFile /config/table.json \
+  -tableConfigFile /config/table-pulsar.json \
   -schemaFile /config/schema.json \
   -exec
 ----

@@ -8,23 +8,14 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
-  kafka:
-    image: wurstmeister/kafka:latest
+  pulsar:
+    image: apachepulsar/pulsar:2.10.0
+    command: "bin/pulsar standalone"
     restart: unless-stopped
-    container_name: "kafka-wiki"
+    container_name: "pulsar"
     ports:
-      - "9092:9092"
-    expose:
-      - "9093"
-    depends_on:
-      - zookeeper
-    environment:
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper-wiki:2181/kafka
-      KAFKA_BROKER_ID: 0
-      KAFKA_ADVERTISED_HOST_NAME: kafka-wiki
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-wiki:9093,OUTSIDE://localhost:9092
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,OUTSIDE:PLAINTEXT
+      - "6650:6650"
+      - "8080:8080"
   pinot-controller:
     image: apachepinot/pinot:0.11.0-arm64
     command: "StartController -zkAddress zookeeper-wiki:2181"
@@ -32,6 +23,7 @@ services:
     volumes:
       - ./config:/config
       - ./data:/data
+      - ./plugins/pinot-pulsar-0.11.0-shaded.jar:/opt/pinot/plugins/pinot-stream-ingestion/pinot-pulsar/pinot-pulsar-0.11.0-shaded.jar
     restart: unless-stopped
     ports:
       - "9000:9000"
@@ -55,6 +47,7 @@ services:
     container_name: "pinot-server-wiki"
     volumes:
       - ./config:/config
+      - ./plugins/pinot-pulsar-0.11.0-shaded.jar:/opt/pinot/plugins/pinot-stream-ingestion/pinot-pulsar/pinot-pulsar-0.11.0-shaded.jar
     ports:
       - "8098:8098"
       - "8097:8097"
