@@ -50,11 +50,18 @@ Ingest Wikipedia events
 python wiki_to_kafka.py
 ----
 
+Donwload Pulsar
+
+[source, bash]
+----
+wget https://archive.apache.org/dist/pulsar/pulsar-2.10.2/apache-pulsar-2.10.2-bin.tar.gz
+----
+
 Check Wikipedia events are ingesting
 
 [souce, bash]
 ----
-./apache-pulsar-2.10.2/bin/pulsar-client consume wiki-events -s mark -n 0
+pulsar-client consume wiki-events -s mark -n 0
 ----
 
 Add Pinot Table
