@@ -1,10 +1,10 @@
-# Building a real-time analytics dashboard with Streamlit, Apache Pinot, and Apache Kafka
+# Building a real-time analytics dashboard with Streamlit, Apache Pinot, and Apache Pulsar
 
 Clone repository
 
 [source, bash]
 ----
-git clone git@github.com:mneedham/pinot-wiki.git && cd pinot-wiki
+git clone git@github.com:mneedham/pinot-wiki.git && cd pinot-wiki && git checkout pulsar
 ----
 
 Download Pinot/Pulsar connector (shaded.jar) from https://search.maven.org/search?q=a:pinot-pulsar and copy it in the `plugins` directory. 
