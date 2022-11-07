@@ -50,7 +50,7 @@ Check Wikipedia events are ingesting
 
 [souce, bash]
 ----
-pulsar-client consume wiki-events -s mark -n 0
+pulsar-client consume wiki-events -s pinot-subscription -n 0
 ----
 
 Add Pinot Table
