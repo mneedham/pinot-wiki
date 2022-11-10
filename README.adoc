@@ -7,7 +7,7 @@ Clone repository
 git clone git@github.com:mneedham/pinot-wiki.git && cd pinot-wiki && git checkout pulsar
 ----
 
-Download Pinot/Pulsar connector (shaded.jar) from https://search.maven.org/search?q=a:pinot-pulsar and copy it in the `plugins` directory. 
+Download Pinot/Pulsar connector (shaded.jar) from https://search.maven.org/search?q=a:pinot-pulsar and copy it to the `plugins` directory. 
 
 Spin up all components
 
