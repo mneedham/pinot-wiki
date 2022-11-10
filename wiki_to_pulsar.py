@@ -26,7 +26,7 @@ pbar = tqdm(total=100, desc="Events published")
 for event in client.events():
     stream = json.loads(event.data)
     payload = json.dumps(stream, default=json_serializer, ensure_ascii=False).encode('utf-8')
-    producer.send(payload)
+    producer.send_async(payload, callback=None)
 
     events_processed += 1
 
