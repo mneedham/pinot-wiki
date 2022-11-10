@@ -16,7 +16,7 @@
         "stream.pulsar.fetch.timeout.millis": "10000",
         "stream.pulsar.consumer.prop.auto.offset.reset": "smallest",
         "stream.pulsar.consumer.factory.class.name": "org.apache.pinot.plugin.stream.pulsar.PulsarConsumerFactory",
-        "stream.pulsar.decoder.class.name": "org.apache.pinot.plugin.stream.kafka.KafkaJSONMessageDecoder",
+        "stream.pulsar.decoder.class.name": "org.apache.pinot.plugin.inputformat.json.JSONMessageDecoder",
         "realtime.segment.flush.threshold.rows": "1000",
         "realtime.segment.flush.threshold.time": "24h",
         "realtime.segment.flush.segment.size": "100M"
