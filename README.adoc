@@ -44,6 +44,8 @@ Ingest Wikipedia events
 python wiki_to_redpanda.py
 ----
 
+Open the Redpanda UI - http://localhost:8080/topics
+
 Check Wikipedia events are ingesting
 
 [source, bash]
@@ -67,7 +69,7 @@ docker exec -it pinot-controller-wiki bin/pinot-admin.sh AddTable \
   -exec
 ----
 
-Open the Pinot UI http://localhost:9000/
+Open the Pinot UI - http://localhost:9000/
 
 Run Streamlit app
 
