@@ -32,36 +32,31 @@ source venv/bin/activate
 pip install -r requirements.txt
 ----
 
-Create Kafka topic
+Create Redpanda topic
 
 [source, bash]
 ----
-docker exec -it kafka-wiki kafka-topics.sh \
-  --bootstrap-server localhost:9092 \
-  --partitions 5 \
-  --topic wiki-events \
-  --create 
+docker exec -it redpanda rpk topic create -p 5 wiki-events
 ----
 
 Ingest Wikipedia events
 
 [source, bash]
 ----
-python wiki_to_kafka.py
+python wiki_to_redpanda.py
 ----
 
 Check Wikipedia events are ingesting
 
 [source, bash]
 ----
-docker exec -it kafka-wiki kafka-run-class.sh kafka.tools.GetOffsetShell \
-  --broker-list localhost:9092 \
-  --topic wiki-events
+docker exec -it redpanda rpk topic describe wiki-events -a
 ----
 
 [souce, bash]
 ----
-kafkacat -C -b localhost:9092 -t wiki-events
+docker exec -it redpanda rpk topic consume wiki-events
+kcat -C -b localhost:9092 -t wiki-events
 ----
 
 Add Pinot Table
