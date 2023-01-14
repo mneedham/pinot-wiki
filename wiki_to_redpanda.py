@@ -2,16 +2,11 @@ import json
 import sseclient
 import datetime
 import requests
-# from confluent_kafka import Producer
 
 from kafka import KafkaProducer
 
 def with_requests(url, headers):
     return requests.get(url, stream=True, headers=headers)
-
-def acked(err, msg):
-    if err is not None:
-        print(f"Failed to deliver message: {msg.value()}: {err.str()}")
 
 def json_serializer(obj):
     if isinstance(obj, (datetime.datetime, datetime.date)):
