@@ -4,7 +4,7 @@ Clone repository
 
 [source, bash]
 ----
-git clone git@github.com:mneedham/pinot-wiki.git && cd pinot-wiki  && git checkout redpanda
+git clone git@github.com:mneedham/pinot-wiki.git && cd pinot-wiki && git checkout redpanda
 ----
 
 Spin up all components
