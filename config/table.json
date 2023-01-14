@@ -11,7 +11,7 @@
       "streamConfigs": {
         "streamType": "kafka",
         "stream.kafka.topic.name": "wiki-events",
-        "stream.kafka.broker.list": "kafka-wiki:9093",
+        "stream.kafka.broker.list": "redpanda:29092",
         "stream.kafka.consumer.type": "lowlevel",
         "stream.kafka.consumer.prop.auto.offset.reset": "smallest",
         "stream.kafka.consumer.factory.class.name": 
