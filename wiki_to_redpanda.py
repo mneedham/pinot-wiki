@@ -24,11 +24,14 @@ producer = KafkaProducer(bootstrap_servers="localhost:9092")
 events_processed = 0
 for event in client.events():
     stream = json.loads(event.data)
+    
+    key = stream["meta"]["id"].encode("utf-8")
     payload = json.dumps(stream, default=json_serializer, ensure_ascii=False).encode('utf-8')
-    # producer.produce(topic='wiki-events', key=str(stream['meta']['id']), 
-    #   value=payload, callback=acked)
-
-    producer.send(topic='wiki-events', value=payload)
+    producer.send(
+        topic='wiki-events', 
+        key=key,
+        value=payload
+    )
 
     events_processed += 1
     if events_processed % 100 == 0:
