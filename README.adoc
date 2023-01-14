@@ -23,8 +23,6 @@ docker-compose -f docker-compose-m1.yml up
 
 Setup Python
 
-Ingest Wikipedia events
-
 [source, bash]
 ----
 python -m venv .venv
