@@ -55,7 +55,7 @@ services:
       - redpanda
   pinot-controller:
     image: apachepinot/pinot:0.11.0
-    command: "StartController -zkAddress zookeeper-wiki:2181 -dataDir /data"
+    command: "StartController -zkAddress zookeeper-wiki:2181"
     container_name: "pinot-controller-wiki"
     volumes:
       - ./config:/config
@@ -73,7 +73,7 @@ services:
     volumes:
       - ./config:/config
     ports:
-      - "8099:8099"      
+      - "8099:8099"
     depends_on:
       - pinot-controller
   pinot-server:
@@ -85,5 +85,6 @@ services:
       - ./config:/config
     ports:
       - "8098:8098"
+      - "8097:8097"
     depends_on:
       - pinot-broker
