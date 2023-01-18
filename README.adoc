@@ -32,16 +32,6 @@ source venv/bin/activate
 pip install -r requirements.txt
 ----
 
-Create Kafka topic
-
-[source, bash]
-----
-docker exec -it kafka-wiki kafka-topics.sh \
-  --bootstrap-server localhost:9092 \
-  --partitions 5 \
-  --topic wiki-events \
-  --create 
-----
 
 Ingest Wikipedia events
 
