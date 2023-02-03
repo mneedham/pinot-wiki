@@ -1,5 +1,4 @@
 sseclient-py
-confluent-kafka
 urllib3
 streamlit
 plotly
