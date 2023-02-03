@@ -26,7 +26,7 @@ services:
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9093,OUTSIDE://0.0.0.0:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,OUTSIDE:PLAINTEXT
   pinot-controller:
-    image: apachepinot/pinot:0.11.0
+    image: apachepinot/pinot:0.12.0
     command: "StartController -zkAddress zookeeper-wiki:2181 -dataDir /data"
     container_name: "pinot-controller-wiki"
     volumes:
@@ -38,7 +38,7 @@ services:
     depends_on:
       - zookeeper
   pinot-broker:
-    image: apachepinot/pinot:0.11.0
+    image: apachepinot/pinot:0.12.0
     command: "StartBroker -zkAddress zookeeper-wiki:2181"
     restart: unless-stopped
     container_name: "pinot-broker-wiki"
@@ -49,7 +49,7 @@ services:
     depends_on:
       - pinot-controller
   pinot-server:
-    image: apachepinot/pinot:0.11.0
+    image: apachepinot/pinot:0.12.0
     command: "StartServer -zkAddress zookeeper-wiki:2181"
     restart: unless-stopped
     container_name: "pinot-server-wiki"
