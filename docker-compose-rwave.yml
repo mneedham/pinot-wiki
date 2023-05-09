@@ -25,6 +25,7 @@ services:
       - minio-0
     volumes:
       - "./rwave/risingwave.toml:/risingwave.toml"
+    restart: unless-stopped
     environment:
       RUST_BACKTRACE: "1"
       # If ENABLE_TELEMETRY is not set, telemetry will start by default
@@ -68,6 +69,7 @@ services:
       - minio-0
     volumes:
       - "./rwave/risingwave.toml:/risingwave.toml"
+    restart: unless-stopped
     environment:
       RUST_BACKTRACE: "1"
       # If ENABLE_TELEMETRY is not set, telemetry will start by default
@@ -118,6 +120,7 @@ services:
     depends_on: []
     volumes:
       - "etcd-0:/etcd-data"
+    restart: unless-stopped
     environment: {}
     container_name: etcd-0
     healthcheck:
@@ -155,6 +158,7 @@ services:
       - meta-node-0
     volumes:
       - "./rwave/risingwave.toml:/risingwave.toml"
+    restart: unless-stopped
     environment:
       RUST_BACKTRACE: "1"
       # If ENABLE_TELEMETRY is not set, telemetry will start by default
@@ -206,6 +210,7 @@ services:
       - "etcd-0"
     volumes:
       - "./rwave/risingwave.toml:/risingwave.toml"
+    restart: unless-stopped
     environment:
       RUST_BACKTRACE: "1"
       # If ENABLE_TELEMETRY is not set, telemetry will start by default

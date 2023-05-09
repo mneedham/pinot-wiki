@@ -36,3 +36,39 @@ SELECT window_start, window_end, count(*)
 FROM TUMBLE (wiki, "timestamp", INTERVAL '1 MINUTES')
 GROUP BY window_start, window_end
 ORDER BY window_start;
+
+
+SELECT window_start, window_end, count(*) AS edits, 
+       count(DISTINCT user) AS users, 
+       count(DISTINCT (meta).domain) AS domains
+FROM TUMBLE (wiki, "timestamp", INTERVAL '1 MINUTES')
+WHERE timestamp > CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '10 minutes'
+GROUP BY window_start, window_end
+ORDER BY window_start;
+
+
+set timezone TO 'Europe/London';
+
+CREATE MATERIALIZED VIEW wiki_10mins AS 
+SELECT window_start, window_end, count(*) AS edits, 
+       count(DISTINCT user) AS users, 
+       count(DISTINCT (meta).domain) AS domains
+FROM TUMBLE (wiki, "timestamp", INTERVAL '1 MINUTES')
+WHERE timestamp > (now() - INTERVAL '10 minutes')
+GROUP BY window_start, window_end;
+
+CREATE MATERIALIZED VIEW wiki_10mins2 AS 
+SELECT window_start, window_end, count(*) AS edits, 
+       count(DISTINCT user) AS users, 
+       count(DISTINCT (meta).domain) AS domains
+FROM TUMBLE (wiki, "timestamp", INTERVAL '1 MINUTES')
+WHERE timestamp > (now() AT TIME ZONE 'UTC' - INTERVAL '10 minutes')
+GROUP BY window_start, window_end;
+
+SELECT window_start, window_end, count(*) AS edits, 
+       count(DISTINCT user) AS users, 
+       count(DISTINCT (meta).domain) AS domains
+FROM TUMBLE (wiki, "timestamp", INTERVAL '1 MINUTES')
+WHERE timestamp > CURRENT_TIMESTAMP AT TIME ZONE 'UTC' - INTERVAL '2 minutes'
+GROUP BY window_start, window_end
+ORDER BY window_start;
